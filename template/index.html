@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>生寫真注文單</title>
+</head>
+<body>
+    <div class="container mx-auto px-5 py-2">
+      {{{ tabs }}}
+
+      <hr class="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700">
+
+      {{{ blocks }}}
+
+      <hr class="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700">
+      <p class="text-xs text-slate-600">Generated at: {{{ generateTime }}}</p>
+    </div>
+    <script>
+      function changeProduct(tabId) {
+          const currentElement = document.querySelector('a[data-tab-active]');
+          if (currentElement) {
+              delete currentElement.dataset.tabActive;
+          }
+
+          const newElement = document.querySelector('a#' + tabId);
+          newElement.dataset.tabActive = true;
+          document.querySelectorAll("div.products").forEach(product => {
+              if (!product.classList.contains("hidden")) {
+                  product.classList.add("hidden");
+              }
+          });
+          document.querySelector("div.products#block-" + newElement.dataset.productId).classList.remove("hidden");
+      }
+
+      window.onload = () => {
+          changeProduct("{{{ defaultTabId }}}");
+      };
+
+    </script>
+</body>
+</html>
