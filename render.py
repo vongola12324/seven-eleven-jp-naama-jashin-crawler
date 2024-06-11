@@ -5,7 +5,7 @@ from model import RequestedSevenPrintForRender
 
 def generate_product_image_block(name: str, token: str, image: str):
     return f"""
-    <div class="flex flex-wrap w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 2xl:w-1/6">
+    <div class="flex flex-wrap w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 2xl:w-1/6 print:w-1/3 print:break-inside-avoid">
       <div class="w-full p-1 md:p-2">
         <img
           alt="{name}"
@@ -20,7 +20,7 @@ def generate_product_image_block(name: str, token: str, image: str):
     """
 
 
-def generate_product_block(seven_print: RequestedSevenPrintForRender) -> str:
+def generate_product_block(seven_print: RequestedSevenPrintForRender, add_page_break: bool = False) -> str:
     image_blocks = []
     for product in seven_print.products:
         if len(product.reservation_id) > 1:
@@ -30,7 +30,15 @@ def generate_product_block(seven_print: RequestedSevenPrintForRender) -> str:
         block = generate_product_image_block(product.name, token, product.image)
         image_blocks.append(block)
     return f"""
-    <div class="-m-1 flex flex-wrap md:-m-2 products hidden" id="block-{seven_print.pid}">
+    <div class="-m-1 flex flex-wrap md:-m-2 products hidden print:flex {'print:break-before-page' if add_page_break else ''}" id="block-{seven_print.pid}">
+        <div class="hidden print:flex print:justify-center print:items-center pt-2 pb-4 w-full">
+            <p class="text-blue-500 font-bold text-xl">
+                {seven_print.name}
+                <span class="p-1 text-center align-baseline text-xs leading-none text-red-500 font-bold">
+                    ({len(seven_print.products)})
+                </span>
+            </p>
+        </div>
         {"".join(image_blocks)}
     </div>
     """
@@ -57,7 +65,7 @@ def generate_tab_item(name: str, pid: str, count: int) -> str:
 def generate_tabs(seven_prints: list[RequestedSevenPrintForRender]) -> str:
     tab_items = [generate_tab_item(seven_print.name, seven_print.pid, len(seven_print.products)) for seven_print in seven_prints]
     return f"""
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center print:hidden">
         <ul class="flex list-none flex-row flex-wrap border-b-0 ps-0" role="tablist">
             {"".join(tab_items)}
         </ul>
@@ -68,8 +76,8 @@ def generate_tabs(seven_prints: list[RequestedSevenPrintForRender]) -> str:
 def render(seven_prints: list[RequestedSevenPrintForRender]) -> None:
     tabs = generate_tabs(seven_prints)
     blocks = []
-    for seven_print in seven_prints:
-        blocks.append(generate_product_block(seven_print))
+    for index, seven_print in enumerate(seven_prints):
+        blocks.append(generate_product_block(seven_print, index >= 1))
 
     with open("template/index.html", "r", encoding="utf-8") as fd:
         html = fd.read()
