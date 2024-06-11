@@ -362,4 +362,5 @@ cython_debug/
 !/output/full/.gitkeep
 /output/requested/*
 !/output/requested/.gitkeep
-/output/index.html
+/output/*
+!/output/.gitkeep

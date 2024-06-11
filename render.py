@@ -85,5 +85,5 @@ def render(seven_prints: list[RequestedSevenPrintForRender]) -> None:
     html = html.replace("{{{ blocks }}}", "".join(blocks))
     html = html.replace("{{{ defaultTabId }}}", f"tab-{seven_prints[0].pid}")
     html = html.replace("{{{ generateTime }}}", arrow.now().format("YYYY-MM-DD HH:mm:ss ZZZ"))
-    with open("output/index.html", "w+", encoding="utf-8") as fd:
+    with open(f"output/index-{arrow.now().format('YYYY-MM-DD-HH-mm-ss')}.html", "w+", encoding="utf-8") as fd:
         fd.write(html)
