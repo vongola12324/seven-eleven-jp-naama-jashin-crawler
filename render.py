@@ -63,7 +63,9 @@ def generate_tab_item(name: str, pid: str, count: int) -> str:
 
 
 def generate_tabs(seven_prints: list[RequestedSevenPrintForRender]) -> str:
-    tab_items = [generate_tab_item(seven_print.name, seven_print.pid, len(seven_print.products)) for seven_print in seven_prints]
+    tab_items = [
+        generate_tab_item(seven_print.name, seven_print.pid, len(seven_print.products)) for seven_print in seven_prints
+    ]
     return f"""
     <div class="flex flex-col items-center print:hidden">
         <ul class="flex list-none flex-row flex-wrap border-b-0 ps-0" role="tablist">
